@@ -50,16 +50,16 @@ export default function SeriesPage(): JSX.Element {
   if (!matched) {
     return (
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-        <header className="flex items-center px-8 py-5 border-b border-gray-800 shrink-0">
+        <header className="flex items-center px-8 py-5 border-b border-white/[0.05] bg-gray-950/80 backdrop-blur-md shrink-0">
           <Link to="/" className="text-gray-400 hover:text-white transition-colors">
             ← 返回首页
           </Link>
         </header>
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <Tv className="text-gray-600 mx-auto mb-4" />
+          <div className="text-center flex flex-col items-center gap-5">
+            <Tv className="text-gray-700 opacity-40" />
             <p className="text-gray-400 text-lg">未找到系列「{decodedName}」</p>
-            <Link to="/" className="mt-4 inline-block text-primary-400 hover:text-primary-300 text-sm">
+            <Link to="/" className="px-5 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg text-sm transition-colors">
               返回首页浏览
             </Link>
           </div>
@@ -71,7 +71,7 @@ export default function SeriesPage(): JSX.Element {
   return (
     <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
       {/* Header */}
-      <header className="flex items-center gap-6 px-8 py-5 border-b border-gray-800 shrink-0">
+      <header className="flex items-center gap-6 px-8 py-5 border-b border-white/[0.05] bg-gray-950/80 backdrop-blur-md shrink-0">
         <Link to="/" className="text-gray-400 hover:text-white transition-colors shrink-0">
           ← 返回
         </Link>
@@ -85,25 +85,31 @@ export default function SeriesPage(): JSX.Element {
       </header>
 
       {/* Category tabs */}
-      <nav className="flex gap-1 px-8 pt-4 shrink-0">
+      <nav className="flex gap-1 px-8 pt-4 shrink-0" role="tablist">
         {matched.categories.map((c) => (
           <button
             key={c.category}
+            role="tab"
             onClick={() => setActiveCategory(c.category)}
-            className={`px-4 py-2 text-sm rounded-t-lg transition-colors ${
+            className={`relative px-4 py-2.5 text-sm rounded-t-lg transition-colors ${
               shownCategory === c.category
-                ? 'bg-gray-900 text-white border-b-2 border-primary-500'
-                : 'text-gray-400 hover:text-white hover:bg-gray-900/50'
+                ? 'bg-white/[0.03] text-white'
+                : 'text-gray-400 hover:text-white hover:bg-white/[0.02]'
             }`}
           >
             {c.category}
-            <span className="ml-1.5 text-xs text-gray-500">{c.episodes.length}</span>
+            <span className={`ml-1.5 text-xs ${
+              shownCategory === c.category ? 'text-gray-400' : 'text-gray-500'
+            }`}>{c.episodes.length}</span>
+            {shownCategory === c.category && (
+              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-primary-500 to-primary-400 rounded-full" />
+            )}
           </button>
         ))}
       </nav>
 
       {/* Episode list */}
-      <main className="flex-1 min-h-0 overflow-y-auto bg-gray-900 mx-4 mb-4 rounded-lg">
+      <main className="flex-1 min-h-0 overflow-y-auto mx-4 mb-4 rounded-lg bg-white/[0.02] border border-white/[0.03]">
         <div className="p-4">
           <EpisodeList
             episodes={episodes}

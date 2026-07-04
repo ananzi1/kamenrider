@@ -76,6 +76,11 @@
 ### 待定
 - 时王剧集标题替换（DPG字幕组英文版）— 已获取 Wikipedia 全列表，待用户确认
 
+### Git 推送
+- **状态：** complete
+- 提交 `2cf9bd4`：14 文件，+404/-29 → `git push origin master` 成功
+- 仓库：https://github.com/ananzi1/kamenrider
+
 ## 测试结果
 | 测试 | 输入 | 预期结果 | 实际结果 | 状态 |
 |------|------|---------|---------|------|

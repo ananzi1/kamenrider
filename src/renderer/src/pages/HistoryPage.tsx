@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { WatchHistory } from '../../../shared/types'
 import { useAppStore } from '../stores/useAppStore'
-import { Tv } from '../components/Icons'
+import { Tv, Film } from '../components/Icons'
 
 function formatDate(iso: string): string {
   const d = new Date(iso)
@@ -77,14 +77,14 @@ export default function HistoryPage(): JSX.Element {
   if (loading) {
     return (
       <div className="flex-1 flex flex-col">
-        <header className="flex items-center px-8 py-5 border-b border-gray-800 shrink-0">
+        <header className="flex items-center px-8 py-5 border-b border-white/[0.05] bg-gray-950/80 backdrop-blur-md shrink-0">
           <Link to="/" className="text-gray-400 hover:text-white transition-colors">
             ← 返回首页
           </Link>
           <h1 className="text-xl font-bold ml-4">观看历史</h1>
         </header>
         <main className="flex-1 flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-[3px] border-primary-500/20 border-t-primary-500 rounded-full animate-spin-slow" />
         </main>
       </div>
     )
@@ -94,22 +94,24 @@ export default function HistoryPage(): JSX.Element {
   if (history.length === 0) {
     return (
       <div className="flex-1 flex flex-col">
-        <header className="flex items-center px-8 py-5 border-b border-gray-800 shrink-0">
+        <header className="flex items-center px-8 py-5 border-b border-white/[0.05] bg-gray-950/80 backdrop-blur-md shrink-0">
           <Link to="/" className="text-gray-400 hover:text-white transition-colors">
             ← 返回首页
           </Link>
           <h1 className="text-xl font-bold ml-4">观看历史</h1>
         </header>
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <Tv className="text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-lg">暂无观看记录</p>
-            <p className="text-gray-500 text-sm mt-2">
-              开始播放视频后，观看进度将自动记录
-            </p>
+          <div className="text-center flex flex-col items-center gap-5">
+            <Film className="text-gray-700 opacity-40" />
+            <div className="text-center">
+              <h2 className="text-xl font-bold mb-2">暂无观看记录</h2>
+              <p className="text-gray-400 leading-relaxed">
+                开始播放视频后，观看进度将自动记录在这里
+              </p>
+            </div>
             <Link
               to="/"
-              className="mt-4 inline-block text-primary-400 hover:text-primary-300 text-sm"
+              className="px-5 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg text-sm transition-colors"
             >
               返回首页浏览
             </Link>
@@ -122,7 +124,7 @@ export default function HistoryPage(): JSX.Element {
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <header className="flex items-center px-8 py-5 border-b border-gray-800 shrink-0">
+      <header className="flex items-center px-8 py-5 border-b border-white/[0.05] bg-gray-950/80 backdrop-blur-md shrink-0">
         <Link to="/" className="text-gray-400 hover:text-white transition-colors">
           ← 返回首页
         </Link>
@@ -140,30 +142,34 @@ export default function HistoryPage(): JSX.Element {
               key={idx}
               onClick={() => handleHistoryClick(item)}
               disabled={!available}
-              className={`w-full flex items-center gap-4 px-5 py-4 rounded-lg text-left transition-colors group ${
+              className={`w-full flex items-center gap-4 px-5 py-4 rounded-xl text-left transition-all duration-200 group ${
                 available
-                  ? 'hover:bg-gray-800 cursor-pointer'
-                  : 'opacity-50 cursor-not-allowed'
+                  ? 'bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.05] hover:border-white/[0.08] cursor-pointer'
+                  : 'bg-white/[0.01] border border-white/[0.02] opacity-40 cursor-not-allowed'
               }`}
             >
               {/* Episode info */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm text-gray-400">{item.seriesName}</span>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="text-sm text-gray-300 font-medium">{item.seriesName}</span>
                   {item.episodeNumber > 0 && (
-                    <span className="text-xs text-gray-600">第{item.episodeNumber}集</span>
+                    <span className="text-xs text-gray-500">第{item.episodeNumber}集</span>
                   )}
                   {item.completed && (
-                    <span className="text-xs px-1.5 py-0.5 rounded bg-green-900/50 text-green-400">
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-green-400/10 border border-green-400/20 text-green-400">
                       已看完
                     </span>
                   )}
                 </div>
                 <div className="flex items-center gap-3">
                   {/* Progress bar */}
-                  <div className="flex-1 h-1.5 bg-gray-700 rounded-full overflow-hidden max-w-[200px]">
+                  <div className="flex-1 h-1.5 bg-white/[0.06] rounded-full overflow-hidden max-w-[200px]">
                     <div
-                      className="h-full bg-primary-500 rounded-full transition-all"
+                      className={`h-full rounded-full transition-[width] duration-500 ${
+                        item.completed
+                          ? 'bg-green-500/50'
+                          : 'bg-gradient-to-r from-primary-500 to-primary-400'
+                      }`}
                       style={{
                         width: item.duration > 0
                           ? `${Math.min(100, (item.progress / item.duration) * 100)}%`

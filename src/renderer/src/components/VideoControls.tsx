@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useImperativeHandle, forwardRef, type RefObject } from 'react'
 import { usePlayerStore } from '../stores/usePlayerStore'
-import { Volume } from './Icons'
+import { Volume, Play, Pause, FullscreenEnter, FullscreenExit } from './Icons'
 
 interface Props {
   videoRef: RefObject<HTMLVideoElement | null>
@@ -171,146 +171,149 @@ const VideoControls = forwardRef<VideoControlsHandle, Props>(function VideoContr
 
   return (
     <>
-      {/* Volume OSD — centered overlay */}
+      {/* Volume OSD — centered glass overlay */}
       <div
         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-300 z-40 ${
           volumeOsd ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
         }`}
       >
-        <div className="bg-black/70 backdrop-blur rounded-xl px-5 py-3 flex items-center gap-3">
+        <div className="glass rounded-2xl px-6 py-4 flex items-center gap-3 shadow-2xl">
           <Volume
             level={volume === 0 ? 'off' : volume < 0.5 ? 'low' : 'high'}
             className="text-white"
           />
-          <span className="text-white font-bold text-lg tabular-nums">
-            {Math.round(volume * 100)}%
+          <span className="text-white font-bold text-2xl tabular-nums">
+            {Math.round(volume * 100)}
           </span>
         </div>
       </div>
 
       {/* Controls bar */}
       <div
-        className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-4 pt-12 pb-3 transition-opacity duration-300 ${
+        className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/75 to-transparent px-5 pt-16 pb-4 transition-opacity duration-300 ${
           show ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       >
-      {/* Seek bar */}
-      <div className="mb-2">
-        <input
-          type="range"
-          min={0}
-          max={displayDuration || 1}
-          step={0.1}
-          value={displayTime}
-          onChange={(e) => handleSeekChange(parseFloat(e.target.value))}
-          onMouseDown={handleSeekStart}
-          onTouchStart={handleSeekStart}
-          onMouseUp={handleSeekEnd}
-          onTouchEnd={handleSeekEnd}
-          className="w-full h-1 appearance-none bg-gray-600 rounded-full cursor-pointer
-            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5
-            [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary-500 [&::-webkit-slider-thumb]:cursor-pointer
-            [&::-webkit-slider-thumb]:opacity-0 [&:hover::-webkit-slider-thumb]:opacity-100
-            [&::-webkit-slider-thumb]:transition-opacity"
-          style={{
-            background: `linear-gradient(to right, #ef4221 0%, #ef4221 ${progress}%, #4b5563 ${progress}%, #4b5563 100%)`
-          }}
-        />
-      </div>
-
-      {/* Controls row */}
-      <div className="flex items-center gap-3 text-white text-sm">
-        {/* Play / Pause */}
-        <button onClick={handlePlayPause} aria-label={isPlaying ? '暂停' : '播放'} className="hover:text-primary-400 transition-colors">
-          {isPlaying ? (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="6" y="4" width="4" height="16" />
-              <rect x="14" y="4" width="4" height="16" />
-            </svg>
-          ) : (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <polygon points="6,4 20,12 6,20" />
-            </svg>
-          )}
-        </button>
-
-        {/* Skip intro */}
-        <button
-          onClick={() => {
-            if (video) video.currentTime = Math.min(video.duration || Infinity, video.currentTime + SKIP_SECONDS)
-          }}
-          aria-label="跳过片头"
-          className="text-xs px-2 py-0.5 rounded hover:bg-white/10 transition-colors tabular-nums"
-          title="跳过片头 (S)"
-        >
-          +{SKIP_SECONDS}s
-        </button>
-
-        {/* Time */}
-        <span className="text-xs tabular-nums min-w-[90px]">
-          {formatTime(displayTime)} / {formatTime(displayDuration)}
-        </span>
-
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* Volume */}
-        <div className="flex items-center gap-1.5 group">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-gray-400">
-            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8.5v7a4.47 4.47 0 0 0 2.5-3.5z" />
-          </svg>
+        {/* Seek bar */}
+        <div className="mb-3 px-0.5">
           <input
             type="range"
             min={0}
-            max={1}
-            step={0.05}
-            value={volume}
-            onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-            className="w-16 h-1 appearance-none bg-gray-600 rounded-full cursor-pointer
-              [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3
-              [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer"
+            max={displayDuration || 1}
+            step={0.1}
+            value={displayTime}
+            onChange={(e) => handleSeekChange(parseFloat(e.target.value))}
+            onMouseDown={handleSeekStart}
+            onTouchStart={handleSeekStart}
+            onMouseUp={handleSeekEnd}
+            onTouchEnd={handleSeekEnd}
+            style={{
+              background: `linear-gradient(to right, #ef4221 0%, #ef4221 ${progress}%, rgba(255,255,255,0.12) ${progress}%, rgba(255,255,255,0.12) 100%)`
+            }}
+            className="w-full rounded-full cursor-pointer
+              [&::-webkit-slider-runnable-track]:h-1.5 [&::-webkit-slider-runnable-track]:rounded-full
+              [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[14px] [&::-webkit-slider-thumb]:h-[14px]
+              [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary-500 [&::-webkit-slider-thumb]:cursor-pointer
+              [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(239,66,33,0.5)]
+              [&::-webkit-slider-thumb]:opacity-0 [&:hover::-webkit-slider-thumb]:opacity-100
+              [&::-webkit-slider-thumb]:transition-opacity [&::-webkit-slider-thumb]:mt-[-4px]"
           />
         </div>
 
-        {/* Playback Rate */}
-        <div className="relative">
+        {/* Controls row */}
+        <div className="flex items-center gap-2 text-white">
+          {/* Play / Pause */}
           <button
-            onClick={() => setShowRateMenu(!showRateMenu)}
-            className="text-xs px-2 py-0.5 rounded hover:bg-white/10 transition-colors tabular-nums"
+            onClick={handlePlayPause}
+            aria-label={isPlaying ? '暂停' : '播放'}
+            className="p-1.5 hover:scale-110 transition-transform"
           >
-            {playbackRate}x
+            {isPlaying ? (
+              <Pause className="text-white" />
+            ) : (
+              <Play className="text-white" />
+            )}
           </button>
-          {showRateMenu && (
-            <div className="absolute bottom-full right-0 mb-2 bg-gray-900 border border-gray-700 rounded-lg py-1 shadow-xl z-50">
-              {RATES.map((rate) => (
-                <button
-                  key={rate}
-                  onClick={() => handleRateChange(rate)}
-                  className={`block w-full text-left px-4 py-1.5 text-xs hover:bg-white/10 transition-colors ${
-                    playbackRate === rate ? 'text-primary-400' : 'text-gray-300'
-                  }`}
-                >
-                  {rate}x
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
 
-        {/* Fullscreen */}
-        <button onClick={handleFullscreen} aria-label={isFullscreen ? '退出全屏' : '全屏'} className="hover:text-primary-400 transition-colors">
-          {isFullscreen ? (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" />
-            </svg>
-          ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
-            </svg>
-          )}
-        </button>
+          {/* Skip intro */}
+          <button
+            onClick={() => {
+              if (video) video.currentTime = Math.min(video.duration || Infinity, video.currentTime + SKIP_SECONDS)
+            }}
+            aria-label="跳过片头"
+            className="text-[11px] px-2.5 py-0.5 rounded-full border border-white/15 hover:border-white/30 hover:bg-white/5 transition-all tabular-nums"
+            title="跳过片头 (S)"
+          >
+            +{SKIP_SECONDS}s
+          </button>
+
+          {/* Time */}
+          <span className="text-xs text-gray-300 tabular-nums min-w-[100px] ml-1">
+            {formatTime(displayTime)} / {formatTime(displayDuration)}
+          </span>
+
+          {/* Spacer */}
+          <div className="flex-1" />
+
+          {/* Volume */}
+          <div className="flex items-center gap-1.5 group">
+            <Volume
+              level={volume === 0 ? 'off' : volume < 0.5 ? 'low' : 'high'}
+              className="text-gray-400 group-hover:text-white transition-colors"
+            />
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={volume}
+              onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+              className="w-16 [&::-webkit-slider-runnable-track]:h-1 [&::-webkit-slider-runnable-track]:rounded-full
+                [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3
+                [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer
+                [&::-webkit-slider-thumb]:shadow-none [&::-webkit-slider-thumb]:mt-[-4px]"
+            />
+          </div>
+
+          {/* Playback Rate */}
+          <div className="relative">
+            <button
+              onClick={() => setShowRateMenu(!showRateMenu)}
+              className="text-xs px-2 py-0.5 rounded-md hover:bg-white/10 transition-colors tabular-nums"
+            >
+              {playbackRate}x
+            </button>
+            {showRateMenu && (
+              <div className="absolute bottom-full right-0 mb-2 glass rounded-xl py-1.5 shadow-xl z-50 animate-scale-in origin-bottom">
+                {RATES.map((rate) => (
+                  <button
+                    key={rate}
+                    onClick={() => handleRateChange(rate)}
+                    className={`block w-full text-left px-4 py-1.5 text-xs hover:bg-white/8 transition-colors ${
+                      playbackRate === rate ? 'text-primary-400 font-medium' : 'text-gray-300'
+                    }`}
+                  >
+                    {rate}x
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Fullscreen */}
+          <button
+            onClick={handleFullscreen}
+            aria-label={isFullscreen ? '退出全屏' : '全屏'}
+            className="p-1.5 hover:scale-110 transition-transform"
+          >
+            {isFullscreen ? (
+              <FullscreenExit className="text-white" />
+            ) : (
+              <FullscreenEnter className="text-white" />
+            )}
+          </button>
+        </div>
       </div>
-    </div>
     </>
   )
 })

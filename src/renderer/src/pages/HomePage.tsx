@@ -42,8 +42,8 @@ export default function HomePage(): JSX.Element {
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between px-8 py-5 border-b border-gray-800 shrink-0">
-        <h1 className="text-xl font-bold">假面骑士播放器</h1>
+      <header className="flex items-center justify-between px-8 py-5 border-b border-white/[0.05] bg-gray-950/80 backdrop-blur-md shrink-0">
+        <h1 className="text-xl font-bold tracking-tight">假面骑士播放器</h1>
         <div className="flex items-center gap-3">
           <Link
             to="/history"
@@ -53,7 +53,7 @@ export default function HomePage(): JSX.Element {
           </Link>
           <button
             onClick={() => setConfigOpen(true)}
-            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm transition-colors"
+            className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg text-sm transition-colors"
           >
             配置目录
           </button>
@@ -65,37 +65,41 @@ export default function HomePage(): JSX.Element {
         {/* Loading */}
         {!initialized || isScanning ? (
           <div className="flex flex-col items-center justify-center h-full gap-4">
-            <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
-            <p className="text-gray-400">
+            <div className="w-10 h-10 border-[3px] border-primary-500/20 border-t-primary-500 rounded-full animate-spin-slow" />
+            <p className="text-gray-400 text-sm">
               {isScanning ? '正在扫描视频文件…' : '加载中…'}
             </p>
           </div>
         ) : !hasDirs ? (
           /* Empty state - no directories */
           <div className="flex flex-col items-center justify-center h-full gap-6">
-            <FolderOpen className="text-gray-600" />
-            <h2 className="text-2xl font-bold">欢迎使用假面骑士播放器</h2>
-            <p className="text-gray-400 text-center max-w-md">
-              请先配置视频目录，然后应用将自动扫描并分类您的假面骑士视频文件
-            </p>
+            <FolderOpen className="text-gray-700 opacity-40" />
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-3">欢迎使用假面骑士播放器</h2>
+              <p className="text-gray-400 max-w-md leading-relaxed">
+                请先配置视频目录，应用将自动扫描并分类您的假面骑士视频文件
+              </p>
+            </div>
             <button
               onClick={() => setConfigOpen(true)}
-              className="px-8 py-3 bg-primary-600 hover:bg-primary-500 rounded-xl text-lg font-medium transition-colors"
+              className="px-8 py-3 bg-primary-600 hover:bg-primary-500 rounded-xl text-base font-medium transition-colors shadow-glow-primary-sm hover:shadow-glow-primary"
             >
               开始配置
             </button>
           </div>
         ) : !hasVideos ? (
           /* Has directories but no videos found */
-          <div className="flex flex-col items-center justify-center h-full gap-4">
-            <Search className="text-gray-600" />
-            <h2 className="text-xl font-bold">未找到视频文件</h2>
-            <p className="text-gray-400 text-center max-w-md">
-              在已配置的目录中未发现视频文件，请检查目录是否正确，或添加新的目录
-            </p>
+          <div className="flex flex-col items-center justify-center h-full gap-6">
+            <Search className="text-gray-700 opacity-40" />
+            <div className="text-center">
+              <h2 className="text-xl font-bold mb-2">未找到视频文件</h2>
+              <p className="text-gray-400 leading-relaxed">
+                在已配置的目录中未发现视频文件，请检查目录或添加新目录
+              </p>
+            </div>
             <button
               onClick={() => setConfigOpen(true)}
-              className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+              className="px-6 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg transition-colors"
             >
               管理目录
             </button>

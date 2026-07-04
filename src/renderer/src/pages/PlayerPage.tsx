@@ -4,7 +4,7 @@ import { useAppStore } from '../stores/useAppStore'
 import { usePlayerStore } from '../stores/usePlayerStore'
 import VideoPlayer from '../components/VideoPlayer'
 import VideoControls, { type VideoControlsHandle } from '../components/VideoControls'
-import { Film } from '../components/Icons'
+import { Film, ChevronLeft, X } from '../components/Icons'
 import type { WatchHistory } from '../../../shared/types'
 
 function formatTime(seconds: number): string {
@@ -152,18 +152,18 @@ export default function PlayerPage(): JSX.Element {
   if (!video) {
     return (
       <div className="flex-1 flex flex-col min-h-0">
-        <header className="flex items-center px-8 py-5 border-b border-gray-800 shrink-0">
+        <header className="flex items-center px-8 py-5 border-b border-white/[0.05] bg-gray-950/80 backdrop-blur-md shrink-0">
           <Link to="/" className="text-gray-400 hover:text-white transition-colors">
             ← 返回首页
           </Link>
         </header>
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <Film className="text-gray-600 mx-auto mb-4" />
+          <div className="flex flex-col items-center gap-5">
+            <Film className="text-gray-700 opacity-40" />
             <p className="text-gray-400 text-lg">未找到该视频</p>
             <Link
               to="/"
-              className="mt-4 inline-block text-primary-400 hover:text-primary-300 text-sm"
+              className="px-5 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg text-sm transition-colors"
             >
               返回首页浏览
             </Link>
@@ -176,10 +176,10 @@ export default function PlayerPage(): JSX.Element {
   return (
     <div className="flex-1 flex flex-col min-h-0">
       {/* Header */}
-      <header className="flex items-center gap-6 px-8 py-4 border-b border-gray-800 shrink-0">
+      <header className="flex items-center gap-6 px-8 py-3.5 border-b border-white/[0.05] bg-gray-950/80 backdrop-blur-md shrink-0">
         <Link
           to={`/series/${encodeURIComponent(video.seriesName)}`}
-          className="text-gray-400 hover:text-white transition-colors shrink-0"
+          className="text-gray-400 hover:text-white transition-colors shrink-0 text-sm"
         >
           ← {video.seriesName}
         </Link>
@@ -200,23 +200,23 @@ export default function PlayerPage(): JSX.Element {
         >
           {/* Resume dialog — inside video-area so it's visible in fullscreen */}
           {resumeHistory && (
-            <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/70">
-              <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-sm mx-4 shadow-2xl">
+            <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+              <div className="glass rounded-2xl p-6 max-w-sm mx-4 shadow-2xl animate-scale-in">
                 <p className="text-lg font-bold mb-2">继续播放？</p>
-                <p className="text-gray-400 text-sm mb-4">
+                <p className="text-gray-400 text-sm mb-5 leading-relaxed">
                   上次看到 {formatTime(resumeHistory.progress)} /{' '}
                   {formatTime(resumeHistory.duration)}，是否从该位置继续？
                 </p>
                 <div className="flex gap-3 justify-end">
                   <button
                     onClick={handleResumeNo}
-                    className="px-5 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+                    className="px-5 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                   >
                     从头开始
                   </button>
                   <button
                     onClick={handleResumeYes}
-                    className="px-5 py-2 text-sm bg-primary-600 hover:bg-primary-500 rounded-lg transition-colors"
+                    className="px-5 py-2 text-sm bg-primary-600 hover:bg-primary-500 rounded-lg transition-colors shadow-glow-primary-sm"
                   >
                     继续播放
                   </button>
@@ -235,14 +235,13 @@ export default function PlayerPage(): JSX.Element {
               {!sidebarOpen && (
                 <button
                   onClick={() => setSidebarOpen(true)}
-                  className={`absolute right-0 top-1/2 -translate-y-1/2 w-8 h-20 bg-gray-900/80 hover:bg-gray-800/90 border border-gray-700/50 rounded-l-lg flex items-center justify-center transition-all duration-300 z-20 ${
+                  className={`absolute right-0 top-1/2 -translate-y-1/2 w-9 h-16 bg-gray-900/90 hover:bg-gray-800/90 border border-white/[0.06] rounded-l-xl flex items-center justify-center transition-all duration-300 z-20 ${
                 sidebarVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'
               }`}
                   title="剧集列表"
+                  aria-label="展开剧集列表"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-gray-400">
-                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-                  </svg>
+                  <ChevronLeft className="text-gray-400" />
                 </button>
               )}
 
@@ -256,21 +255,20 @@ export default function PlayerPage(): JSX.Element {
 
               {/* Sidebar panel */}
               <aside
-                className={`absolute right-0 top-0 bottom-0 w-64 bg-gray-950 border-l border-gray-800 overflow-y-auto z-30 transition-transform duration-300 ease-out ${
+                className={`absolute right-0 top-0 bottom-0 w-64 bg-gray-950/95 backdrop-blur-xl border-l border-white/[0.06] overflow-y-auto z-30 transition-transform duration-300 ease-out ${
                   sidebarOpen ? 'translate-x-0' : 'translate-x-full'
                 }`}
               >
-                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.05]">
                   <span className="text-sm text-gray-400">
                     剧集 · {seriesEpisodes.length}
                   </span>
                   <button
                     onClick={() => setSidebarOpen(false)}
-                    className="text-gray-500 hover:text-white transition-colors"
+                    className="text-gray-500 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5"
+                    aria-label="关闭剧集列表"
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                    </svg>
+                    <X />
                   </button>
                 </div>
                 <div className="py-1">
@@ -278,9 +276,9 @@ export default function PlayerPage(): JSX.Element {
                     <button
                       key={ep.id}
                       onClick={() => handleEpisodeSelect(ep.id)}
-                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-gray-800 ${
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-white/[0.04] ${
                         ep.id === videoId
-                          ? 'bg-gray-800 text-primary-400 border-l-2 border-primary-500'
+                          ? 'bg-primary-500/5 text-primary-300 border-l-2 border-primary-500'
                           : 'text-gray-400 border-l-2 border-transparent'
                       }`}
                     >
@@ -298,8 +296,8 @@ export default function PlayerPage(): JSX.Element {
 
         {/* Episode sidebar */}
         {seriesEpisodes.length > 1 && (
-          <aside className="w-64 min-h-0 bg-gray-950 border-l border-gray-800 overflow-y-auto shrink-0">
-            <div className="px-4 py-3 border-b border-gray-800 text-sm text-gray-400">
+          <aside className="w-64 min-h-0 bg-gray-950/60 border-l border-white/[0.05] overflow-y-auto shrink-0">
+            <div className="px-4 py-3 border-b border-white/[0.05] text-sm text-gray-400">
               同系列剧集 · {seriesEpisodes.length} 集
             </div>
             <div className="py-1">
@@ -307,9 +305,9 @@ export default function PlayerPage(): JSX.Element {
                 <button
                   key={ep.id}
                   onClick={() => handleEpisodeClick(ep.id)}
-                  className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-gray-800 ${
+                  className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-white/[0.04] ${
                     ep.id === videoId
-                      ? 'bg-gray-800 text-primary-400 border-l-2 border-primary-500'
+                      ? 'bg-primary-500/5 text-primary-300 border-l-2 border-primary-500'
                       : 'text-gray-400 border-l-2 border-transparent'
                   }`}
                 >

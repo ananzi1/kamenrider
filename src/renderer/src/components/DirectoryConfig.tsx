@@ -45,15 +45,15 @@ export default function DirectoryConfig({ open, onClose }: Props): JSX.Element |
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-      <div className="bg-gray-900 border border-gray-700 rounded-xl w-[500px] max-h-[80vh] flex flex-col shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+      <div className="glass rounded-2xl w-[520px] max-h-[80vh] flex flex-col shadow-2xl animate-scale-in">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
           <h2 className="text-lg font-bold">配置视频目录</h2>
           <button
             onClick={onClose}
             aria-label="关闭"
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-gray-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5"
           >
             <X />
           </button>
@@ -62,17 +62,17 @@ export default function DirectoryConfig({ open, onClose }: Props): JSX.Element |
         {/* Directory List */}
         <div className="flex-1 overflow-y-auto p-5 space-y-2">
           {dirs.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">尚未添加任何目录</p>
+            <p className="text-gray-400 text-center py-8">尚未添加任何目录</p>
           ) : (
             dirs.map((dir) => (
               <div
                 key={dir}
-                className="flex items-center justify-between bg-gray-800 rounded-lg px-4 py-3"
+                className="flex items-center justify-between bg-white/[0.03] border border-white/[0.04] rounded-lg px-4 py-3"
               >
                 <span className="text-sm text-gray-300 truncate flex-1 mr-3">{dir}</span>
                 <button
                   onClick={() => handleRemove(dir)}
-                  className="text-gray-500 hover:text-red-400 text-sm transition-colors shrink-0"
+                  className="text-gray-500 hover:text-red-400 hover:bg-red-400/10 px-2 py-1 rounded text-sm transition-colors shrink-0"
                 >
                   移除
                 </button>
@@ -82,10 +82,10 @@ export default function DirectoryConfig({ open, onClose }: Props): JSX.Element |
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-5 py-4 border-t border-gray-800">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-white/[0.06]">
           <button
             onClick={handleAdd}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors flex items-center gap-1.5"
+            className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg text-sm transition-colors flex items-center gap-1.5"
           >
             <Plus /> 添加目录
           </button>

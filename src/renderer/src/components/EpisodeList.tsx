@@ -12,7 +12,7 @@ export default function EpisodeList({ episodes, seriesName, lastWatchedFilePath 
   const navigate = useNavigate()
 
   if (episodes.length === 0) {
-    return <p className="text-gray-500 text-center py-12">该分类下暂无剧集</p>
+    return <p className="text-gray-400 text-center py-16">该分类下暂无剧集</p>
   }
 
   return (
@@ -24,15 +24,17 @@ export default function EpisodeList({ episodes, seriesName, lastWatchedFilePath 
         <button
           key={ep.id}
           onClick={() => navigate(`/player/${ep.id}`)}
-          className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-800 text-left transition-colors group ${
+          className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-white/[0.04] text-left transition-colors group ${
             isLastWatched
-              ? 'border-l-2 border-primary-500 bg-gray-800/50'
-              : ''
+              ? 'border-l-2 border-primary-500 bg-primary-500/5'
+              : 'border-l-2 border-transparent'
           }`}
         >
           {/* Episode number badge */}
-          <span className={`w-16 text-right text-sm shrink-0 tabular-nums ${
-            isLastWatched ? 'text-primary-400' : 'text-gray-500 group-hover:text-gray-300'
+          <span className={`w-16 text-right text-sm shrink-0 tabular-nums py-0.5 rounded-md ${
+            isLastWatched
+              ? 'text-primary-400 bg-primary-500/10'
+              : 'text-gray-500 group-hover:text-gray-300'
           }`}>
             {ep.episodeNumber > 0 ? `第${ep.episodeNumber}集` : '-'}
           </span>
@@ -51,8 +53,8 @@ export default function EpisodeList({ episodes, seriesName, lastWatchedFilePath 
 
           {/* Last watched tag */}
           {isLastWatched && (
-            <span className="text-xs px-1.5 py-0.5 rounded bg-primary-600/30 text-primary-400 shrink-0">
-              上次
+            <span className="text-xs px-2 py-0.5 rounded-full bg-primary-500/20 border border-primary-500/30 text-primary-400 shrink-0">
+              上次看到
             </span>
           )}
         </button>
