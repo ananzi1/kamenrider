@@ -1,153 +1,232 @@
-# 假面骑士本地视频播放器
+# 假面骑士本地视频播放器 🎬
 
-## 项目简介
+> Kamen Rider Local Video Player — Electron 桌面应用，专为假面骑士系列设计的本地视频管理与播放工具。
 
-一个专为假面骑士系列设计的本地视频播放器桌面应用。从百度网盘下载视频到本地后，应用自动扫描、分类展示，支持剧集切换、播放控制和断点续播。
-
-## 核心功能
-
-### 1. 本地视频展示
-- 读取本地目录中的视频文件并展示
-
-### 2. 视频分类管理
-- 按作品系列分类（如：空我、亚极陀、龙骑、555、剑、响鬼、甲斗、电王、Kiva、Decade、W、OOO、Fourze、Wizard、铠武、Drive、Ghost、Ex-Aid、Build、时王、Zero-One、Saber、Revice、Geats、Gotchard 等）
-- 按类型分类（TV正片、剧场版、外传、特别篇 等）
-
-### 3. 剧集切换
-- 支持同一系列内切换上一集/下一集
-- 支持按集数选择跳转
-
-### 4. 播放控制
-- 播放 / 暂停
-- 快进 / 快退
-- 倍速播放
-
-### 5. 播放历史与进度记忆
-- 记录观看历史（看过哪些剧集）
-- 记忆每集的播放进度（看到哪个片段），下次继续播放时自动从上次位置恢复
+[![Electron](https://img.shields.io/badge/Electron-33-47848f?logo=electron)](https://www.electronjs.org/)
+[![React](https://img.shields.io/badge/React-18-61dafb?logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-5-646cff?logo=vite)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38bdf8?logo=tailwindcss)](https://tailwindcss.com/)
 
 ---
 
-## 技术栈
+## 📖 项目简介
 
-| 层级 | 技术 | 说明 |
-|------|------|------|
-| 桌面框架 | Electron 28 | 基于 Chromium，内嵌视频播放能力 |
-| 前端框架 | React 18 + TypeScript 5 | 类型安全 |
-| 构建工具 | Vite 5 + electron-vite | 三入口打包（main/preload/renderer） |
-| 样式方案 | Tailwind CSS 3 | 原子化 CSS |
-| 状态管理 | Zustand 5 | 轻量级 |
-| 数据存储 | JSON 文件 | Node.js fs 模块，位于 userData 目录 |
-| 视频播放 | HTML5 `<video>` | 原生支持 MP4/MKV/WebM |
-| 路由 | react-router-dom 6 | Hash 路由 |
-| 视频扫描 | 递归目录扫描 | 从目录结构自动解析系列/类型/集数 |
+从百度网盘下载假面骑士视频到本地后，应用会自动扫描目录、按系列和类别分类展示。支持剧集切换、播放控制、断点续播、观看历史追踪等完整的视频播放体验。
+
+### 核心功能
+
+| 功能 | 说明 |
+|------|------|
+| 🔍 **自动扫描** | 递归扫描本地目录，从目录结构自动解析系列、分类（TV正片/剧场版/外传/特别篇）和集数 |
+| 🎯 **智能标题** | 纯数字文件名（如 `01.mp4`）自动匹配剧集标题数据库，显示 "第X话 标题" |
+| 🖼️ **系列封面** | 内置系列封面图，卡片式网格展示，一目了然 |
+| ▶️ **视频播放** | HTML5 原生播放器，支持 MP4/MKV/WebM，控制栏 + 键盘快捷键 |
+| ⏱️ **断点续播** | 每 5 秒自动保存播放进度，下次打开自动恢复 |
+| 📜 **观看历史** | 时间倒序展示，进度条可视化，点击直接跳转继续播放 |
+| 🎛️ **播放控制** | 播放/暂停、±5秒快进快退、倍速（0.5x–2x）、音量、全屏、跳过片头 |
+| ⌨️ **键盘快捷键** | 空格（播放/暂停）、←→（快退/快进）、↑↓（音量）、F（全屏）、M（静音） |
+| ♿ **无障碍** | SVG 图标、aria-label、焦点环、尊重系统 reduced-motion 偏好 |
 
 ---
 
-## 项目结构
+## 🛠️ 技术栈
+
+| 层级 | 技术 | 版本 | 说明 |
+|------|------|------|------|
+| 桌面框架 | Electron | 33 | 基于 Chromium，内嵌视频解码 |
+| 前端框架 | React | 18 | 函数组件 + Hooks |
+| 类型系统 | TypeScript | 5 | 严格模式 |
+| 构建工具 | Vite | 5 | electron-vite 三入口打包 |
+| 样式方案 | Tailwind CSS | 3 | 暗色主题，响应式布局 |
+| 状态管理 | Zustand | 5 | 轻量级，无 boilerplate |
+| 路由 | react-router-dom | 6 | HashRouter（兼容 file:// 协议） |
+| 数据存储 | JSON 文件 | — | Node.js fs 模块，存于 userData 目录 |
+| 视频播放 | HTML5 `<video>` | — | 原生支持 MP4/MKV/WebM |
+
+---
+
+## 📁 项目结构
 
 ```
 kamenrider/
-├── README.md                    # 工程文档
-├── package.json                 # 依赖与脚本
-├── electron.vite.config.ts      # electron-vite 构建配置
-├── tsconfig.json                # TypeScript 配置
-├── tsconfig.node.json           # Main/Preload TS 配置
-├── tsconfig.web.json            # Renderer TS 配置
-├── tailwind.config.js           # Tailwind 配置
-├── postcss.config.js            # PostCSS 配置
+├── README.md
+├── CODE_DOC.md                   # 详细代码文档（架构、组件、数据流）
+├── task_plan.md                  # 任务计划（阶段跟踪）
+├── findings.md                   # 研究发现与决策记录
+├── progress.md                   # 开发进度日志
+├── package.json
+├── electron.vite.config.ts       # electron-vite 构建配置
+├── tsconfig.json                 # TypeScript 基础配置
+├── tsconfig.node.json            # Main / Preload TS 配置
+├── tsconfig.web.json             # Renderer TS 配置
+├── tailwind.config.js            # Tailwind 自定义配置
+├── postcss.config.js             # PostCSS 配置
+├── .gitignore
+├── scripts/
+│   └── convert-rmvb.js           # RMVB → MP4 批量转码脚本
 ├── src/
-│   ├── main/                    # Electron 主进程
-│   │   ├── index.ts             # 入口：创建窗口、注册 IPC
-│   │   ├── scanner.ts           # 视频文件扫描与解析
-│   │   ├── storage.ts           # JSON 文件读写（配置 + 历史）
-│   │   └── ipc-handlers.ts      # IPC 通信处理器
+│   ├── main/                     # Electron 主进程
+│   │   ├── index.ts              # 窗口创建 + IPC 注册
+│   │   ├── scanner.ts            # 视频文件递归扫描与解析
+│   │   ├── storage.ts            # JSON 读写（配置 + 观看历史）
+│   │   └── ipc-handlers.ts       # 9 个 IPC 通道处理器
 │   ├── preload/
-│   │   └── index.ts             # contextBridge 安全 API
-│   ├── renderer/                # React 渲染进程
-│   │   ├── index.html           # HTML 入口
+│   │   └── index.ts              # contextBridge 安全暴露 API
+│   ├── renderer/                 # React 渲染进程
+│   │   ├── index.html
 │   │   └── src/
-│   │       ├── main.tsx         # React 入口
-│   │       ├── App.tsx          # 根组件 + 路由
-│   │       ├── assets/main.css  # 全局样式
-│   │       ├── env.d.ts         # 类型声明
-│   │       ├── pages/           # 页面组件
-│   │       ├── stores/          # Zustand 状态
-│   │       └── components/      # 通用组件
-│   └── shared/
-│       └── types.ts             # 共享类型定义
-│       └── episode-titles.ts    # 剧集标题数据库 (可扩展)
-└── resources/                   # 应用图标等静态资源
+│   │       ├── main.tsx          # React 入口挂载
+│   │       ├── App.tsx           # 根组件：HashRouter + 4 条路由
+│   │       ├── env.d.ts          # 全局类型声明（window.electronAPI）
+│   │       ├── assets/
+│   │       │   └── main.css      # 全局样式 + Tailwind 指令
+│   │       ├── pages/
+│   │       │   ├── HomePage.tsx   # 首页：系列网格 + 目录配置
+│   │       │   ├── SeriesPage.tsx # 系列详情：剧集列表 + 分类标签
+│   │       │   ├── PlayerPage.tsx # 播放页：视频 + 侧边栏 + 续播
+│   │       │   └── HistoryPage.tsx# 观看历史：倒序列表 + 进度条
+│   │       ├── components/
+│   │       │   ├── SeriesList.tsx     # 系列卡片网格（封面 + 渐变遮罩）
+│   │       │   ├── EpisodeList.tsx    # 剧集列表（当前播放高亮）
+│   │       │   ├── VideoPlayer.tsx    # HTML5 视频播放器核心
+│   │       │   ├── VideoControls.tsx  # 播放控制栏（进度/音量/倍速/全屏）
+│   │       │   ├── DirectoryConfig.tsx# 视频目录增删改配置弹窗
+│   │       │   └── Icons.tsx          # 7 个 SVG 图标组件
+│   │       └── stores/
+│   │           ├── useAppStore.ts     # 应用状态（系列列表/目录/加载态）
+│   │           └── usePlayerStore.ts  # 播放状态（进度/音量/倍速/全屏）
+│   └── shared/                   # 主进程 ↔ 渲染进程 共享
+│       ├── types.ts              # 核心类型定义（7 个导出）
+│       ├── episode-titles.ts     # 剧集标题数据库（W 49话 + 时王 49话）
+│       └── series-covers.ts      # 系列封面图片映射
+└── resources/                    # 应用图标等静态资源
 ```
 
 ---
 
-## 实现进度
+## 🚀 快速开始
 
-### 已完成 ✅
-- [x] 项目脚手架：Electron + React + Vite + TypeScript + Tailwind
-- [x] 主进程窗口创建与 Preload 脚本
-- [x] 渲染进程 React 入口 + 路由 (HashRouter)
-- [x] Zustand 状态管理 Store 定义
-- [x] 视频文件扫描器 (scanner.ts)：递归目录 → 解析系列/类型/集数
-- [x] 剧集标题自动匹配 (episode-titles.ts)：纯数字文件名自动补全标题（当前已收录：假面骑士W 全49话）
-- [x] JSON 文件存储 (storage.ts)：应用配置 + 观看历史
-- [x] IPC 通信 (ipc-handlers.ts)：扫描、配置、历史、视频路径
-- [x] 首页：系列网格/列表展示 + 目录配置弹窗
-- [x] 系列详情页：剧集列表 + 分类筛选标签
-- [x] 视频播放器：VideoPlayer 组件 + 控制栏 + 键盘快捷键（±5秒快进退）
-- [x] 播放页：剧集侧边栏 + 断点续播 + 每5秒自动保存进度
-- [x] 播放历史页：时间倒序 + 进度条 + 相对时间 + 点击跳转
-- [x] Windows 文件路径 → file:// URL 编码修复
-- [x] 构建验证通过
-- [x] RMVB 批量转码脚本（`npm run convert`，解决 Chromium 不支持 RealMedia 解码）
+### 环境要求
 
----
+- **Node.js** ≥ 18
+- **npm** ≥ 9
+- **Windows** 10/11（macOS/Linux 理论兼容，未测试）
+- （可选）**ffmpeg** — 如需 RMVB 转码
 
-## 开发命令
+### 安装与运行
 
 ```bash
-npm install          # 安装依赖
-npm run dev          # 启动开发模式
-npm run build        # 编译构建
-npm run package      # 构建 + 打包 Windows 安装包
-npm run convert <目录> # RMVB → MP4 批量转码（需 ffmpeg）
+# 1. 克隆仓库
+git clone https://github.com/ananzi1/kamenrider.git
+cd kamenrider
+
+# 2. 安装依赖
+npm install
+
+# 3. 启动开发模式（热重载）
+npm run dev
+
+# 4. 生产构建
+npm run build
+
+# 5. 打包 Windows 安装包
+npm run package
 ```
 
-## 视频目录结构约定
+### 视频目录准备
 
-扫描器假定以下目录结构来解析系列、类型和集数：
+应用扫描器按以下目录结构解析系列、类型和集数：
 
 ```
-KamenRider/
+你的视频目录/
 ├── 假面骑士空我/
-│   ├── TV/
+│   ├── TV正片/
 │   │   ├── 01.mp4
 │   │   ├── 02.mp4
 │   │   └── ...
 │   └── 剧场版/
 │       └── 剧场版XXX.mp4
-├── 假面骑士亚极陀/
-│   ├── 01.mp4          ← 无分类子目录，默认为 TV正片
+├── 假面骑士W/
+│   ├── 01.mp4              ← 无子目录则默认为 TV正片
+│   ├── 02.mp4
 │   └── ...
+└── 假面骑士Ex-Aid/
+    └── [字幕组][假面骑士ea][01][标题][1080p].mp4  ← 也支持含标签的文件名
 ```
 
-## 剧集标题自动匹配
+启动应用后，在首页点击齿轮图标配置视频目录，点击扫描即可。
 
-当视频文件名仅为纯数字（如 `01.mp4`）时，扫描器会自动查询 `episode-titles.ts` 中的标题数据库，生成"第X话 标题"格式的显示名称。
+---
 
-**示例：**
-| 文件名 | 系列 | 显示标题 |
-|--------|------|----------|
-| `01.mp4` | 假面骑士W | 第1话 W的检索／侦探是两位一体 |
-| `02.mp4` | 假面骑士W | 第2话 W的检索／让城市哭泣之物 |
-| `01.mp4` | 假面骑士空我 | 第1集 *(暂无标题数据)* |
+## ⌨️ 键盘快捷键
 
-**扩展标题数据：** 编辑 `src/shared/episode-titles.ts`，在 `TITLES` 对象中添加新系列即可：
+| 按键 | 功能 |
+|------|------|
+| `Space` | 播放 / 暂停 |
+| `←` / `→` | 快退 / 快进 5 秒 |
+| `↑` / `↓` | 音量增减 |
+| `F` | 切换全屏 |
+| `M` | 静音 / 取消静音 |
+| `[` / `]` | 上一集 / 下一集 |
+| `1` – `9` | 切换倍速（1=0.5x, 2=0.75x, 3=1x, 4=1.25x, 5=1.5x, 6=2x） |
+| `S` | 跳过片头（可配置秒数） |
+| `Esc` | 退出全屏 |
+
+---
+
+## 🔧 RMVB 转码
+
+部分老旧假面骑士资源为 RMVB 格式，Chromium 不支持解码。使用内置转码脚本批量转换：
+
+```bash
+# 将指定目录下所有 .rmvb 转为 .mp4
+npm run convert "D:/视频/假面骑士龙骑"
+```
+
+> 需要先安装 [ffmpeg](https://ffmpeg.org/download.html) 并加入 PATH。
+
+---
+
+## 🧩 扩展剧集标题
+
+编辑 `src/shared/episode-titles.ts`，在 `TITLES` 对象中添加新系列：
+
 ```ts
-'假面骑士空我': {
-  1: '复活',
-  2: '变身',
-  // ...
+export const TITLES: Record<string, Record<number, string>> = {
+  '假面骑士W': {
+    1: 'W的检索／侦探是两位一体',
+    2: 'W的检索／让城市哭泣之物',
+    // ... 全 49 话已收录
+  },
+  '假面骑士时王': {
+    1: 'キングダム2068',
+    // ... 全 49 话已收录
+  },
+  // 👇 添加新系列
+  '假面骑士空我': {
+    1: '复活',
+    2: '变身',
+    // ...
+  },
 }
 ```
+
+添加封面图：将 `系列名_Poster.webp` 放入 `resources/covers/`，并在 `src/shared/series-covers.ts` 中注册映射。
+
+---
+
+## 📚 文档
+
+| 文档 | 内容 |
+|------|------|
+| [CODE_DOC.md](CODE_DOC.md) | 完整代码文档：架构图、组件详解、数据流、IPC 通道 |
+| [task_plan.md](task_plan.md) | 任务计划：6 阶段分解，决策记录 |
+| [findings.md](findings.md) | 研究发现：技术决策、问题解决、资源链接 |
+| [progress.md](progress.md) | 进度日志：会话记录、测试结果、错误追踪 |
+
+---
+
+## 📄 License
+
+MIT
