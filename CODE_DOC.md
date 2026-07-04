@@ -1,6 +1,6 @@
 # 假面骑士播放器 — 代码文档
 
-> 最后更新：2026-06-16
+> 最后更新：2026-07-04
 
 ---
 
@@ -53,6 +53,7 @@
 | 系列封面图片 | 首页卡片支持封面图片展示（封面图 + 渐变遮罩 + 文字叠加），无封面时降级为纯色背景。新增 `series-covers.ts` 映射文件 + `get-cover-url` IPC 通道 + `getCoverUrl` Preload API | series-covers.ts, ipc-handlers, preload, SeriesList |
 | "上次看到"剧集标记 | 进入系列详情页时自动查询观看历史，高亮标记该系列最近播放的剧集（主色左边框 + 编号/标题着色 + "上次"标签）。SeriesPage 通过 `getAllWatchHistory` 过滤查找并传给 EpisodeList | SeriesPage, EpisodeList |
 | RMVB 转码脚本 | 新增 `scripts/convert-rmvb.js` + `npm run convert <目录>` 命令，递归扫描目录中所有 `.rmvb` 文件 → ffmpeg 批量转 H.264 MP4，解决 Chromium 不支持 RealMedia 解码的兼容问题 | scripts/convert-rmvb.js |
+| UI/UX 规范化 | 全应用 emoji 替换为 SVG 图标（新增 `Icons.tsx`）、添加 aria-label、全局 focus-visible 焦点环、尊重 prefers-reduced-motion、修复文字对比度、补全 cursor-pointer | Icons.tsx, main.css, tailwind.config.js, HomePage/PlayerPage/SeriesPage/HistoryPage/VideoControls/DirectoryConfig/SeriesList |
 
 ### 进行中 🔧
 
@@ -113,6 +114,7 @@ _当前无进行中任务_
 │  │    ├─ PlayerPage    → VideoPlayer, VideoControls  │    │
 │  │    └─ HistoryPage                                 │    │
 │  │                                                  │    │
+│  │  Shared: Icons (SVG icon components)              │    │
 │  │  State: useAppStore / usePlayerStore (Zustand)   │    │
 │  └──────────────────────────────────────────────────┘    │
 └──────────────────────────────────────────────────────────┘
@@ -390,6 +392,8 @@ Tailwind 指令 + 自定义滚动条 + 全局 reset
 
 | 规则 | 值 | 说明 |
 |------|------|------|
+| `:focus-visible` | `outline: 2px solid #ef4221` | 键盘导航焦点环，所有可交互元素共用 |
+| `@media (prefers-reduced-motion)` | 所有动画/过渡设为 0.01ms | 尊重系统"减少动画"设置，不影响交互逻辑 |
 | `html, body, #root` | `height: 100%` | 确保高度链从根元素贯通，让滚轮事件穿透到子滚动容器 |
 | `body { overflow: hidden }` | 隐藏页面级滚动条 | 配合 `height:100%` 让子容器 (`overflow-y-auto`) 独立接管滚动 |
 | `body { user-select: none }` | 禁止文本选中 | 桌面应用 UI 体验 |
@@ -435,6 +439,22 @@ Tailwind 指令 + 自定义滚动条 + 全局 reset
 
 ### 10. `src/renderer/src/components/` — 通用组件
 
+#### 10.0 `Icons.tsx` — SVG 图标组件
+
+提供应用内统一的 SVG 图标，替代跨平台不一致的 emoji。
+
+| 组件 | Props | 说明 | 使用场景 |
+|------|------|------|----------|
+| `FolderOpen` | `className?` | 文件夹图标 | 首页空配置状态 |
+| `Search` | `className?` | 搜索图标 | 首页无视频状态 |
+| `Film` | `className?` | 胶片图标 | 播放页视频未找到 |
+| `Tv` | `className?` | 电视图标 | 系列页/历史页空状态 |
+| `X` | `className?` | 关闭图标 | 弹窗关闭按钮 |
+| `Plus` | `className?` | 加号图标 | 添加按钮前缀 |
+| `Volume` | `className?` + `level: 'off' \| 'low' \| 'high'` | 音量图标（三态） | 音量 OSD 面板 |
+
+所有图标使用 `stroke` 而非 `fill` 绘制，与项目已有的播放/暂停/全屏 SVG 风格一致（strokeWidth 1.5~2.5，视图标尺寸调整）。
+
 #### 10.1 `DirectoryConfig.tsx`
 
 目录配置弹窗组件。
@@ -451,7 +471,7 @@ Tailwind 指令 + 自定义滚动条 + 全局 reset
 | `handleRemove(dir)` | 从列表中移除指定目录 |
 | `handleSave()` | ① 更新 store → ② IPC 持久化 `set-config` → ③ 触发 `scanVideos` → ④ 结果写入 store → ⑤ 关闭弹窗 |
 
-**UI 结构：** 模态弹窗（头部标题 / 目录列表 + 移除按钮 / 底部添加+保存按钮）
+**UI 结构：** 模态弹窗（头部标题 + X 关闭按钮 / 目录列表 + 移除按钮 / 底部 Plus 添加 + 保存按钮）
 
 #### 10.2 `SeriesList.tsx`
 
@@ -466,8 +486,8 @@ Tailwind 指令 + 自定义滚动条 + 全局 reset
 **卡片渲染：**
 - 有封面：展示封面图片（`object-cover` 填充）+ 底部渐变遮罩（`from-black/90 via-black/60 to-transparent`）+ 文字叠加
 - 无封面：纯色 `bg-gray-900` 背景 + 文字，降级体验一致
-- 卡片高度固定 `h-56`（224px），`hover:scale-[1.02]` 微动效
-- 空数组时显示"暂无系列"提示
+- 卡片按钮 `cursor-pointer` + hover 微动效 `scale-[1.02]`
+- 空数组时显示"暂无系列"提示（文字对比度已修正为 `text-gray-400`）
 - 点击卡片跳转 `/series/:seriesName`
 
 #### 10.3 `EpisodeList.tsx`
@@ -519,18 +539,18 @@ Tailwind 指令 + 自定义滚动条 + 全局 reset
 | 功能 | 实现 |
 |------|------|
 | 自动隐藏 | 播放时 3 秒无操作自动淡出，暂停时始终显示，父容器 `onMouseMove` 调用 `wake()` 唤醒 |
-| 播放/暂停 | 按钮 + 点击视频画面切换 |
+| 播放/暂停 | 按钮（含 `aria-label="播放/暂停"`）+ 点击视频画面切换 |
 | 进度条 | `<input range>` 自定义样式，主色渐变填充，拖拽 seek |
 | 时间显示 | `m:ss` 格式，拖拽时实时更新 seek 预览 |
 | 音量 | 滑块调节 (0~1) |
 | 倍速 | 下拉菜单：0.5x / 0.75x / 1x / 1.25x / 1.5x / 2x |
-| 全屏 | 按钮 + 快捷键 `F` + 双击视频画面 |
+| 全屏 | 按钮（含 `aria-label="全屏/退出全屏"`）+ 快捷键 `F` + 双击视频画面 |
 
 **键盘快捷键：** `Space` 暂停/播放 | `←` 快退5秒 | `→` 快进5秒 | `↑` 音量+5% | `↓` 音量-5%（伴有居中 OSD 提示，1.2 秒自动消失） | `S` 跳过片头 +75 秒 | `F` 全屏
 
-**跳过片头按钮：** 播放按钮右侧 `+85s` 按钮，点击或按 `S` 键 → `video.currentTime += 85`（上限不超过总时长），用于一键跳过片头曲
+**跳过片头按钮：** 播放按钮右侧 `+85s` 按钮（含 `aria-label="跳过片头"`），点击或按 `S` 键 → `video.currentTime += 85`（上限不超过总时长），用于一键跳过片头曲
 
-**音量 OSD：** 用方向键调节音量时，屏幕中央弹出半透明面板，显示 🔊/🔉/🔇 图标 + 当前音量百分比，1.2 秒无操作后自动淡出
+**音量 OSD：** 用方向键调节音量时，屏幕中央弹出半透明面板，显示 Volume 图标（三态：off/low/high）+ 当前音量百分比，1.2 秒无操作后自动淡出
 
 ### 11. `src/renderer/src/pages/` — 页面组件
 
@@ -541,8 +561,8 @@ Tailwind 指令 + 自定义滚动条 + 全局 reset
 | 状态 | 条件 | 显示 |
 |------|------|------|
 | 加载中 | `!initialized \|\| isScanning` | 旋转加载动画 + 文字 |
-| 空配置 | `initialized && !hasDirs` | 📁 图标 + 引导文字 + "开始配置"按钮 |
-| 无视频 | `hasDirs && !hasVideos` | 🔍 图标 + "未找到视频"提示 |
+| 空配置 | `initialized && !hasDirs` | `<FolderOpen>` 图标 + 引导文字 + "开始配置"按钮 |
+| 无视频 | `hasDirs && !hasVideos` | `<Search>` 图标 + "未找到视频"提示 |
 | 正常 | `hasVideos` | `<SeriesList>` 系列网格 |
 
 **初始化流程：**
@@ -571,7 +591,7 @@ mount → getConfig() → 更新 store.videoDirectories
 **三种状态：**
 | 状态 | 条件 | 显示 |
 |------|------|------|
-| 系列不存在 | `matched === undefined` | 📺 图标 + "未找到系列" + 返回链接 |
+| 系列不存在 | `matched === undefined` | `<Tv>` 图标 + "未找到系列" + 返回链接 |
 | 正常 | `matched` | Header（返回 + 系列名 + 统计）→ 分类标签栏 → 剧集列表 |
 
 #### 11.3 `PlayerPage.tsx`
@@ -627,7 +647,7 @@ Header（← 系列名 + 剧集标题）
 | 状态 | 显示 |
 |------|------|
 | 加载中 | 旋转加载动画 |
-| 空记录 | 📺 图标 + "暂无观看记录" + 引导文字 + 返回链接 |
+| 空记录 | `<Tv>` 图标 + "暂无观看记录" + 引导文字 + 返回链接 |
 | 有记录 | Header（返回 + 标题 + 记录数）→ 历史列表 |
 
 **列表每行：** 系列名 + 集数标识 + 进度条（主色填充）+ 时间信息 + 最后观看时间（相对时间）+ 已看完标记（绿色标签），点击跳转对应播放页。若视频文件已不在扫描目录中（`videoIdByPath` 未命中），按钮置灰 `opacity-50 cursor-not-allowed` 且禁用点击。

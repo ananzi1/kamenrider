@@ -26,7 +26,7 @@ export default function SeriesList({ series }: Props): JSX.Element {
 
   if (series.length === 0) {
     return (
-      <p className="text-gray-500 text-center py-16">暂无系列，请先配置视频目录并扫描</p>
+      <p className="text-gray-400 text-center py-16">暂无系列，请先配置视频目录并扫描</p>
     )
   }
 
@@ -40,7 +40,7 @@ export default function SeriesList({ series }: Props): JSX.Element {
           <button
             key={s.name}
             onClick={() => navigate(`/series/${encodeURIComponent(s.name)}`)}
-            className="group relative overflow-hidden rounded-xl border border-gray-800 hover:border-primary-700 h-56 text-left transition-all duration-200 hover:scale-[1.02]"
+            className="group relative overflow-hidden rounded-xl border border-gray-800 hover:border-primary-700 h-56 text-left transition-all duration-200 hover:scale-[1.02] cursor-pointer"
           >
             {/* Background: cover image or solid fallback */}
             {coverUrl ? (

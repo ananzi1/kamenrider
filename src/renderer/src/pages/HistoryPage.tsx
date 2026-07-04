@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { WatchHistory } from '../../../shared/types'
 import { useAppStore } from '../stores/useAppStore'
+import { Tv } from '../components/Icons'
 
 function formatDate(iso: string): string {
   const d = new Date(iso)
@@ -101,7 +102,7 @@ export default function HistoryPage(): JSX.Element {
         </header>
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-5xl mb-4">📺</p>
+            <Tv className="text-gray-600 mx-auto mb-4" />
             <p className="text-gray-400 text-lg">暂无观看记录</p>
             <p className="text-gray-500 text-sm mt-2">
               开始播放视频后，观看进度将自动记录

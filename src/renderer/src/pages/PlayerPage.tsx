@@ -4,6 +4,7 @@ import { useAppStore } from '../stores/useAppStore'
 import { usePlayerStore } from '../stores/usePlayerStore'
 import VideoPlayer from '../components/VideoPlayer'
 import VideoControls, { type VideoControlsHandle } from '../components/VideoControls'
+import { Film } from '../components/Icons'
 import type { WatchHistory } from '../../../shared/types'
 
 function formatTime(seconds: number): string {
@@ -158,7 +159,7 @@ export default function PlayerPage(): JSX.Element {
         </header>
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-5xl mb-4">🎬</p>
+            <Film className="text-gray-600 mx-auto mb-4" />
             <p className="text-gray-400 text-lg">未找到该视频</p>
             <Link
               to="/"

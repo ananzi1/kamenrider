@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAppStore } from '../stores/useAppStore'
 import DirectoryConfig from '../components/DirectoryConfig'
 import SeriesList from '../components/SeriesList'
+import { FolderOpen, Search } from '../components/Icons'
 
 export default function HomePage(): JSX.Element {
   const {
@@ -72,7 +73,7 @@ export default function HomePage(): JSX.Element {
         ) : !hasDirs ? (
           /* Empty state - no directories */
           <div className="flex flex-col items-center justify-center h-full gap-6">
-            <div className="text-6xl">📁</div>
+            <FolderOpen className="text-gray-600" />
             <h2 className="text-2xl font-bold">欢迎使用假面骑士播放器</h2>
             <p className="text-gray-400 text-center max-w-md">
               请先配置视频目录，然后应用将自动扫描并分类您的假面骑士视频文件
@@ -87,7 +88,7 @@ export default function HomePage(): JSX.Element {
         ) : !hasVideos ? (
           /* Has directories but no videos found */
           <div className="flex flex-col items-center justify-center h-full gap-4">
-            <div className="text-5xl">🔍</div>
+            <Search className="text-gray-600" />
             <h2 className="text-xl font-bold">未找到视频文件</h2>
             <p className="text-gray-400 text-center max-w-md">
               在已配置的目录中未发现视频文件，请检查目录是否正确，或添加新的目录

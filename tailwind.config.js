@@ -19,8 +19,14 @@ module.exports = {
       },
       fontFamily: {
         sans: ['"Microsoft YaHei"', '"PingFang SC"', 'sans-serif']
+      },
+      animation: {
+        'spin-slow': 'spin 1.5s linear infinite',
       }
     }
   },
-  plugins: []
+  plugins: [],
+  future: {
+    hoverOnlyWhenSupported: true,
+  }
 }

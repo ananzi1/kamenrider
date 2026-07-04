@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAppStore } from '../stores/useAppStore'
 import EpisodeList from '../components/EpisodeList'
+import { Tv } from '../components/Icons'
 import type { SeriesCategory } from '../../../shared/types'
 
 export default function SeriesPage(): JSX.Element {
@@ -56,7 +57,7 @@ export default function SeriesPage(): JSX.Element {
         </header>
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-5xl mb-4">📺</p>
+            <Tv className="text-gray-600 mx-auto mb-4" />
             <p className="text-gray-400 text-lg">未找到系列「{decodedName}」</p>
             <Link to="/" className="mt-4 inline-block text-primary-400 hover:text-primary-300 text-sm">
               返回首页浏览

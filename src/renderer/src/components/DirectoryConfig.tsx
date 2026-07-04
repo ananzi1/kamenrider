@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAppStore } from '../stores/useAppStore'
+import { X, Plus } from './Icons'
 
 interface Props {
   open: boolean
@@ -51,9 +52,10 @@ export default function DirectoryConfig({ open, onClose }: Props): JSX.Element |
           <h2 className="text-lg font-bold">配置视频目录</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white text-xl leading-none transition-colors"
+            aria-label="关闭"
+            className="text-gray-400 hover:text-white transition-colors"
           >
-            ✕
+            <X />
           </button>
         </div>
 
@@ -83,9 +85,9 @@ export default function DirectoryConfig({ open, onClose }: Props): JSX.Element |
         <div className="flex items-center justify-between px-5 py-4 border-t border-gray-800">
           <button
             onClick={handleAdd}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors"
+            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors flex items-center gap-1.5"
           >
-            ＋ 添加目录
+            <Plus /> 添加目录
           </button>
           <div className="flex gap-3">
             <button
