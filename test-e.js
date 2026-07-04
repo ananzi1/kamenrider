@@ -1,0 +1,1 @@
+const e=require("electron");console.log(JSON.stringify({type:typeof e,val:String(e).slice(0,100)}));try{const w=new e.BrowserWindow({width:400,height:300});w.loadURL("data:text/html,<h1>Hello</h1>");console.log("window created")}catch(err){console.log("err:",err.message)}setTimeout(()=>e.app.quit(),2000);
